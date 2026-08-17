@@ -1,0 +1,209 @@
+/* =====================================================================
+   NILE DESIGN SYSTEM — colors_and_type.css
+   Source of truth: "Nile Brand Visual Identity Guidelines v1.0, Feb 2026"
+   (official) + Brand Colours 2026 PPTX theme. Load this file first.
+
+   TYPOGRAPHY (official): Inter is the PRIMARY brand typeface for all digital
+   & print communications — Regular (body), Semibold (headlines/subheads),
+   Bold (CTA text). Arial is used ONLY for editable docs (PowerPoint, Word).
+   Do not substitute or mix additional typefaces. Inter (full Latin set) is
+   hosted locally in /fonts as woff2 — no external/CDN web fonts.
+   ===================================================================== */
+
+/* Inter — self-hosted (SIL Open Font License). Paths resolve from this file (root). */
+@font-face { font-family:'Inter'; font-style:normal; font-weight:400; font-display:swap; src:url('fonts/inter-400.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:500; font-display:swap; src:url('fonts/inter-500.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:600; font-display:swap; src:url('fonts/inter-600.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:700; font-display:swap; src:url('fonts/inter-700.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:italic; font-weight:400; font-display:swap; src:url('fonts/inter-400-italic.woff2') format('woff2'); }
+
+:root {
+  /* ---------------------------------------------------------------
+     PRIMARY COLORS  (dominant — foundation of the identity)
+     --------------------------------------------------------------- */
+  --nile-blue:        #0E4EAF; /* Nile Blue — primary brand color   PMS 2388 C */
+  --deep-nile-blue:   #072F68; /* Deep Nile Blue                    PMS 2945 C */
+  --bright-nile-blue: #2070E1; /* Bright Nile Blue                  */
+
+  /* ---------------------------------------------------------------
+     SECONDARY COLORS  (emphasis only — max 10–20% of a composition)
+     --------------------------------------------------------------- */
+  --solar-amber:   #FF6600; /* Solar Amber                          PMS 1505 C */
+  --nile-teal:     #35D39A; /* Nile Teal                            PMS 3395 C */
+  --dawn-violet:   #8758ED; /* Dawn Violet                          PMS 2725 C */
+  --nile-sky:      #8BB4EE; /* Nile Sky                             PMS 2727 C */
+  --solar-crimson: #EE4A59; /* Solar Crimson (LOGO)                 PMS 1788 C */
+  --solar-crimson-cta: #EC394C; /* Solar Crimson used in CTA + brand gradient */
+
+  /* ---------------------------------------------------------------
+     NEUTRALS
+     --------------------------------------------------------------- */
+  --nile-ink:    #001E2D; /* primary body text / dark surfaces */
+  --nile-slate:  #4D626C; /* muted / secondary text            */
+  --white:       #FFFFFF;
+  --cloud-mist:  #F6F8FB; /* light, open content surfaces      */
+
+  /* tints / shades (oklch-harmonized; for UI states only) */
+  --nile-blue-700: #0A3C87;
+  --nile-blue-100: #DCE8FB;
+  --nile-blue-050: #EEF4FE;
+  --nile-sky-100:  #CBDEFA;
+  --teal-700:      #1E8C66;
+  --teal-100:      #D6F5E9;
+  --crimson-100:   #FCE0E3;
+  --amber-100:     #FFE7D4;
+  --violet-100:    #ECE3FC;
+
+  /* legacy aliases (kept so existing files keep working) */
+  --nile-navy: var(--deep-nile-blue);
+  --nile-blue-bright: var(--bright-nile-blue);
+  --nile-orange: var(--solar-amber);
+  --nile-coral: var(--solar-crimson);
+  --nile-mint: var(--nile-teal);
+  --nile-mint-700: var(--teal-700);
+  --nile-mint-100: var(--teal-100);
+  --nile-coral-100: var(--crimson-100);
+  --nile-orange-100: var(--amber-100);
+  --nile-cloud: var(--cloud-mist);
+
+  /* ---------------------------------------------------------------
+     GRADIENTS  (use sparingly — for dynamism & brand moments)
+     --------------------------------------------------------------- */
+  /* Logo shield — Solar Amber → Solar Crimson */
+  --nile-grad-mark:        radial-gradient(circle at 30% 15%, #FF6600 30%, #EE4A59 75%);
+  --nile-grad-mark-linear: linear-gradient(135deg, #FF6600 0%, #EE4A59 100%);
+  /* CTA buttons — MUST be Solar Crimson → Solar Amber (#EC394C → #FF6600) */
+  --nile-grad-cta:         linear-gradient(135deg, #EC394C 0%, #FF6600 100%);
+  /* Brand gradient — Nile Blue + Solar Crimson + Solar Amber (tickers, dividers) */
+  --nile-grad-brand:       linear-gradient(120deg, #0E4EAF 0%, #EC394C 60%, #FF6600 100%);
+  /* Background gradients */
+  --nile-grad-blue: linear-gradient(135deg, #2070E1 0%, #0E4EAF 100%);
+  --nile-grad-ink:  linear-gradient(160deg, #072F68 0%, #001E2D 100%);
+  --nile-grad-sky:  linear-gradient(180deg, #8BB4EE 0%, #F6F8FB 100%);
+
+  /* ---------------------------------------------------------------
+     SEMANTIC TOKENS
+     --------------------------------------------------------------- */
+  --bg:          var(--white);
+  --bg-subtle:   var(--cloud-mist);
+  --bg-inset:    #EEF2F8;
+  --bg-dark:     var(--nile-ink);
+  --bg-dark-alt: var(--deep-nile-blue);
+
+  --fg1:        var(--nile-ink);    /* primary text */
+  --fg2:        var(--nile-slate);  /* secondary / muted text */
+  --fg3:        #6B8295;            /* faint captions */
+  --fg-on-dark: var(--white);
+  --fg-on-dark-2: #AFC6E6;
+
+  --accent:        var(--nile-blue);
+  --accent-hover:  var(--nile-blue-700);
+  --accent-bright: var(--bright-nile-blue);
+  --link:          var(--bright-nile-blue);
+  --link-hover:    var(--solar-amber);
+  --highlight:     var(--solar-amber);
+
+  --success: var(--nile-teal);
+  --success-fg: var(--teal-700);
+  --warning: var(--solar-amber);
+  --danger:  var(--solar-crimson);
+
+  --border:        #DCE3ED;
+  --border-strong: #C2CEDD;
+  --border-dark:   rgba(255,255,255,.14);
+
+  /* ---------------------------------------------------------------
+     TYPE  (Inter — see header)
+     --------------------------------------------------------------- */
+  --font-sans:     'Inter', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-editable: Arial, 'Helvetica Neue', sans-serif; /* PowerPoint / Word only */
+  --font-mono:     ui-monospace, 'SFMono-Regular', Menlo, monospace; /* utility only — not a brand face */
+
+  /* Brand hierarchy (per guidelines):
+     Headlines/subheads = Inter Semibold(600) · Body = Inter Regular(400) · CTA = Inter Bold(700) */
+  --text-xs:   0.75rem;   /* 12px */
+  --text-sm:   0.875rem;  /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-md:   1.25rem;   /* 20px — brand body size */
+  --text-lg:   1.5rem;    /* 24px */
+  --text-xl:   1.75rem;   /* 28px */
+  --text-2xl:  2.25rem;   /* 36px — brand subheadline */
+  --text-3xl:  3rem;      /* 48px */
+  --text-4xl:  3.5rem;    /* 56px — brand headline */
+  --text-5xl:  4.5rem;    /* 72px */
+
+  --weight-reg:  400;
+  --weight-med:  500;
+  --weight-semi: 600;
+  --weight-bold: 700;
+
+  --leading-tight: 1.1;
+  --leading-snug:  1.25;
+  --leading-body:  1.55;
+  --tracking-tight: -0.02em;
+  --tracking-wide:  0.08em;
+
+  /* ---------------------------------------------------------------
+     RADII / SHADOW / SPACING / MOTION
+     --------------------------------------------------------------- */
+  --r-xs: 4px; --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 24px; --r-2xl: 32px; --r-pill: 999px;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px;
+
+  --shadow-xs: 0 1px 2px rgba(0,30,45,.06);
+  --shadow-sm: 0 2px 6px rgba(0,30,45,.07), 0 1px 2px rgba(0,30,45,.05);
+  --shadow-md: 0 8px 24px rgba(0,30,45,.09), 0 2px 6px rgba(0,30,45,.05);
+  --shadow-lg: 0 20px 48px rgba(0,30,45,.14), 0 6px 14px rgba(0,30,45,.07);
+  --shadow-blue: 0 14px 34px rgba(14,78,175,.28);
+  --shadow-cta: 0 12px 30px rgba(236,57,76,.30);
+  --shadow-orange: var(--shadow-cta);
+  --ring-focus: 0 0 0 3px rgba(32,112,225,.35);
+
+  --dur-fast: 120ms; --dur: 200ms; --dur-slow: 360ms;
+  --ease: cubic-bezier(.2,.7,.3,1);
+}
+
+/* =====================================================================
+   SEMANTIC ELEMENT STYLES
+   ===================================================================== */
+.nile-type, .nile-prose {
+  font-family: var(--font-sans); color: var(--fg1);
+  font-size: var(--text-base); line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+
+/* Headlines & subheads = Inter Semibold */
+.h-display, .nile-prose h1 {
+  font-family: var(--font-sans); font-weight: var(--weight-semi);
+  font-size: var(--text-4xl); line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight); color: var(--fg1);
+  text-wrap: balance; margin: 0 0 .4em;
+}
+.h1, .nile-prose h2 {
+  font-weight: var(--weight-semi); font-size: var(--text-2xl);
+  line-height: var(--leading-snug); letter-spacing: var(--tracking-tight);
+  color: var(--fg1); margin: 0 0 .5em;
+}
+.h2, .nile-prose h3 {
+  font-weight: var(--weight-semi); font-size: var(--text-xl);
+  line-height: var(--leading-snug); color: var(--fg1); margin: 0 0 .5em;
+}
+.h3 { font-weight: var(--weight-semi); font-size: var(--text-lg); line-height: var(--leading-snug); color: var(--fg1); }
+
+.eyebrow { font-weight: var(--weight-bold); font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--highlight); }
+.lead { font-size: var(--text-md); line-height: var(--leading-body); color: var(--fg2); }
+.nile-prose p { margin: 0 0 1em; color: var(--fg2); font-size: var(--text-md); }
+small, .text-sm { font-size: var(--text-sm); }
+.caption { font-size: var(--text-xs); color: var(--fg3); }
+
+/* Pull-quotes: Inter (no separate face) — Regular italic */
+.quote { font-family: var(--font-sans); font-weight: var(--weight-reg);
+  font-style: italic; font-size: var(--text-xl); line-height: 1.4; color: var(--fg1); }
+
+a.nile-link { color: var(--link); text-decoration: none; }
+a.nile-link:hover { color: var(--link-hover); }
+
+code, .code { font-family: var(--font-mono); font-size: .9em; background: var(--bg-inset);
+  padding: .12em .4em; border-radius: var(--r-xs); color: var(--nile-blue); }

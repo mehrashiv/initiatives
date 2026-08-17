@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+/* Inter — self-hosted, reuse /fonts/inter-*.woff2 from the design system */
+@font-face { font-family:'Inter'; font-style:normal; font-weight:400; font-display:swap; src:url('/fonts/inter-400.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:500; font-display:swap; src:url('/fonts/inter-500.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:600; font-display:swap; src:url('/fonts/inter-600.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:700; font-display:swap; src:url('/fonts/inter-700.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-style:italic; font-weight:400; font-display:swap; src:url('/fonts/inter-400-italic.woff2') format('woff2'); }
+
+@theme {
+  /* Font */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+  /* Accent — Nile Blue family (primary brand color) */
+  --color-accent: #0E4EAF;          /* Nile Blue */
+  --color-accent-hover: #0A3C87;    /* Nile Blue 700 */
+  --color-accent-deep: #072F68;     /* Deep Nile Blue */
+  --color-accent-bright: #2070E1;   /* Bright Nile Blue — links, focus ring base */
+  --color-accent-light: #DCE8FB;    /* Nile Blue 100 */
+  --color-accent-lightest: #EEF4FE; /* Nile Blue 050 */
+
+  /* Success — Nile Teal */
+  --color-success: #35D39A;         /* Nile Teal */
+  --color-success-dark: #1E8C66;    /* Teal 700 */
+  --color-success-light: #D6F5E9;   /* Teal 100 */
+
+  /* Warning — Solar Amber */
+  --color-warning: #FF6600;         /* Solar Amber */
+  --color-warning-light: #FFE7D4;   /* Amber 100 */
+
+  /* Danger — Solar Crimson (two shades: logo vs. CTA/brand-gradient) */
+  --color-danger: #EE4A59;          /* Solar Crimson (logo) */
+  --color-danger-cta: #EC394C;      /* Solar Crimson — CTA + brand gradient */
+  --color-danger-light: #FCE0E3;    /* Crimson 100 */
+
+  /* Extra category accents */
+  --color-violet: #8758ED;          /* Dawn Violet */
+  --color-violet-light: #ECE3FC;    /* Violet 100 */
+  --color-sky: #8BB4EE;             /* Nile Sky */
+  --color-sky-light: #CBDEFA;       /* Nile Sky 100 */
+
+  /* Neutrals */
+  --color-text-primary: #001E2D;    /* Nile Ink */
+  --color-text-secondary: #4D626C;  /* Nile Slate */
+  --color-text-faint: #6B8295;
+  --color-background: #FFFFFF;      /* White */
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #F6F8FB;  /* Cloud Mist */
+  --color-surface-inset: #EEF2F8;
+
+  /* Borders */
+  --color-border: #DCE3ED;
+  --color-border-strong: #C2CEDD;
+
+  /* Type scale */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-md: 1.25rem;    /* 20px */
+  --text-lg: 1.5rem;     /* 24px */
+  --text-xl: 1.75rem;    /* 28px */
+  --text-2xl: 2.25rem;   /* 36px */
+  --text-3xl: 3rem;      /* 48px */
+  --text-4xl: 3.5rem;    /* 56px */
+  --text-5xl: 4.5rem;    /* 72px */
+
+  --font-weight-reg: 400;
+  --font-weight-med: 500;
+  --font-weight-semi: 600;
+  --font-weight-bold: 700;
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.25;
+  --leading-body: 1.55;
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.08em;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-pill: 999px;
+
+  /* Spacing */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 24px;
+  --spacing-6: 32px;
+  --spacing-7: 48px;
+  --spacing-8: 64px;
+  --spacing-9: 96px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0,30,45,.06);
+  --shadow-sm: 0 2px 6px rgba(0,30,45,.07), 0 1px 2px rgba(0,30,45,.05);
+  --shadow-md: 0 8px 24px rgba(0,30,45,.09), 0 2px 6px rgba(0,30,45,.05);
+  --shadow-lg: 0 20px 48px rgba(0,30,45,.14), 0 6px 14px rgba(0,30,45,.07);
+  --shadow-accent-glow: 0 14px 34px rgba(14,78,175,.28);
+  --shadow-cta-glow: 0 12px 30px rgba(236,57,76,.30);
+  --ring-focus: 0 0 0 3px rgba(32,112,225,.35);
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 360ms;
+  --ease-standard: cubic-bezier(.2,.7,.3,1);
+}
+
+/* Gradients — not expressible as @theme color tokens, defined as plain CSS custom properties */
+:root {
+  --gradient-logo-mark: radial-gradient(circle at 30% 15%, #FF6600 30%, #EE4A59 75%);
+  --gradient-logo-mark-linear: linear-gradient(135deg, #FF6600 0%, #EE4A59 100%);
+  --gradient-cta: linear-gradient(135deg, #EC394C 0%, #FF6600 100%); /* CTA buttons MUST use this — never a solid color */
+  --gradient-brand: linear-gradient(120deg, #0E4EAF 0%, #EC394C 60%, #FF6600 100%); /* dividers/strips — sparingly */
+}
+
+::placeholder {
+  color: var(--color-text-faint);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-accent-bright);
+  box-shadow: var(--ring-focus);
+}
