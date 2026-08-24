@@ -1,42 +1,8 @@
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-
-## Read Before Anything Else
-
-Read in this exact order before any implementation:
-
-1. context/project-overview.md
-2. context/architecture.md
-3. context/ui-tokens.md
-4. context/layout-fundamentals.md
-5. context/ui-rules.md
-6. context/ui-registry.md
-7. context/code-standards.md
-8. context/library-docs.md
-9. context/build-plan.md
-10. context/progress-tracker.md
-
-## Rules That Never Change
-
-- Never use hardcoded hex values or raw Tailwind color classes
-- Update `progress-tracker.md` and `ui-registry.md` after every feature
-- Before any third party library — load its installed skill first,
-  then read `context/library-docs.md` for project-specific rules
-- If the same problem persists after one corrective prompt —
-  stop immediately and run /recover
-- Every page renders through the one shared page-container component —
-  never a hand-rolled `<main className="mx-auto max-w-...">`. See
-  `context/layout-fundamentals.md` before building the very first page.
-
-## Available Skills
-
-- `/architect` — before any complex feature. Think before building.
-- `/imprint` — after any new UI component. Capture patterns.
-- `/review` — before demo or when something feels off.
-- `/recover` — when something breaks after one failed correction.
-- `/remember save` — when a feature spans multiple sessions.
-- `/remember restore` — when returning after a multi-session feature.
+---
+description: Instructions building apps with MCP
+globs: *
+alwaysApply: true
+---
 
 # InsForge SDK Documentation - Overview
 
@@ -168,33 +134,14 @@ Payments currently has TypeScript SDK docs only. Use the Payments API reference 
 - Serverless functions have one endpoint and do not support nested route paths
 - Storage: Upload files to buckets, store URLs in database
 - AI integrations should call OpenRouter directly with `baseURL: "https://openrouter.ai/api/v1"` and a server-side `OPENROUTER_API_KEY`
-- **EXTRA IMPORTANT**: Use Tailwind CSS v4 (`@theme` in `globals.css`, no `tailwind.config.ts`). Lock these dependencies in `package.json`
-
-## InsForge backend
-
-This project uses [InsForge](https://insforge.dev): an all-in-one, open-source Postgres-based backend (BaaS) that gives this app a database, authentication, file storage, edge functions, realtime, an AI model gateway, and payments through one platform.
-
-- **Project:** **Initiatives** (API base `https://initiatives.shivmehra.com`)
-- **Skills:** these InsForge skills are installed for supported coding agents. Reach for them before implementing any InsForge feature instead of guessing the API:
-  - `insforge`: app code with the `@insforge/sdk` client (database CRUD, auth, storage, edge functions, realtime, AI, email, and Stripe payments).
-  - `insforge-cli`: backend and infrastructure via the `insforge` CLI (projects, SQL, migrations, RLS policies, storage buckets, functions, secrets, payment setup, schedules, deploys).
-  - `insforge-debug`: diagnosing failures (SDK/HTTP errors, RLS denials, auth and OAuth issues) and running security or performance audits.
-  - `insforge-integrations`: wiring external auth providers (Clerk, Auth0, WorkOS, Better Auth, etc.) for JWT-based RLS, or the OKX x402 payment facilitator.
-  - `find-skills`: discovering additional skills on demand.
-- **Credentials:** app code reads keys from `.env.local`; the CLI reads `.insforge/project.json`. Never hardcode or commit keys.
-
-Key patterns:
-
-- Database inserts take an array: `insert([{ ... }])`.
-- Reference users with `auth.users(id)`; use `auth.uid()` in RLS policies.
-- For storage uploads, persist both the returned `url` and `key`.
+- **EXTRA IMPORTANT**: Use Tailwind CSS 3.4 (do not upgrade to v4). Lock these dependencies in `package.json`
 
 <!-- INSFORGE:START -->
 ## InsForge backend
 
 This project uses [InsForge](https://insforge.dev): an all-in-one, open-source Postgres-based backend (BaaS) that gives this app a database, authentication, file storage, edge functions, realtime, an AI model gateway, and payments through one platform.
 
-- **Project:** **oss-project** (API base `https://initiatives.shivmehra.com`)
+- **Project:** **oss-project** (API base `https://initiatives.rayanmehra.com`)
 - **Skills:** these InsForge skills are installed for supported coding agents. Reach for them before implementing any InsForge feature instead of guessing the API:
   - `insforge`: app code with the `@insforge/sdk` client (database CRUD, auth, storage, edge functions, realtime, AI, email, and Stripe payments).
   - `insforge-cli`: backend and infrastructure via the `insforge` CLI (projects, SQL, migrations, RLS policies, storage buckets, functions, secrets, payment setup, schedules, deploys).
