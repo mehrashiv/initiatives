@@ -140,6 +140,16 @@ Build each screen's UI first with realistic mock data, verify it visually agains
 
 ---
 
+## Phase 9 — Note Attachments
+
+### 31. Note attachments UI (mock data)
+- **UI:** Paperclip button in Task Detail's note-compose toolbar opens a native multi-file picker; selected files render as removable chips under the compose textarea. Posted notes render their attachments — image thumbnails, filename/size chips for everything else. New **Attachments** filter pill added next to the existing All activity/Notes toggle. Mock data only — no real upload, no real storage.
+
+### 32. Note attachments real data + storage logic
+- **Logic:** `migrations/*_activities-add-attachments.sql` adds `activities.attachments jsonb not null default '[]'`. New private `task-attachments` InsForge Storage bucket with custom `storage.objects` RLS (any authenticated SELECT, owner-only INSERT/DELETE — see `architecture.md`'s "Note Attachments" section for the exact policies). Client-side direct upload via the existing browser InsForge client (`uploadAuto()` per file, 25 MB/file cap, 10 files/note cap, any file type); `addNote` extended to accept `attachments` and persist them alongside the note in one insert, with its text requirement relaxed to allow empty text when ≥1 attachment is present. Rendering uses the SDK's authenticated `download()` + object URL (the bucket is private, so the raw `url` field isn't directly browser-loadable). `deleteNote` additionally removes the note's storage objects before deleting the row.
+
+---
+
 ## Feature Count
 
 | Phase | Features |
@@ -152,4 +162,5 @@ Build each screen's UI first with realistic mock data, verify it visually agains
 | 6. Task Detail | 4 |
 | 7. My Activities | 5 |
 | 8. Dashboard | 5 |
-| **Total** | **30** |
+| 9. Note Attachments | 2 |
+| **Total** | **32** |

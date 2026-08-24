@@ -184,7 +184,7 @@ export function MyActivitiesView({
   };
 
   const handleAddNote = (id: string, text: string): Promise<boolean> =>
-    addNote({ taskId: id, text })
+    addNote({ taskId: id, text, attachments: [] })
       .then((result) => {
         if (!result.ok) {
           showToast(result.error, "error");

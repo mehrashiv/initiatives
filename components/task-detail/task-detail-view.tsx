@@ -27,7 +27,7 @@ import { DetailsPanel } from "./details-panel";
 import { ActivityTimeline } from "./activity-timeline";
 import { timelineEntryFromRow, type ActivityChangedPayload } from "./activity-helpers";
 import type { TimelineEntry } from "./types";
-import type { TaskStatus } from "@/types";
+import type { Attachment, TaskStatus } from "@/types";
 import type { ProjectOption } from "@/components/shared/new-task-modal";
 
 interface OwnerOption {
@@ -189,6 +189,7 @@ export function TaskDetailView({
               text,
               edited: false,
               pinned: false,
+              attachments: [],
               createdAt: new Date(createdAt),
             },
           ],
@@ -439,9 +440,11 @@ export function TaskDetailView({
   // state once a real id comes back. Edit/pin/delete all target a specific
   // activities.id, and a temp-id-then-swap approach breaks ActivityTimeline's
   // editingId tracking if the user starts editing before the swap lands.
-  // Deduped by id since the realtime echo for this same insert can land first.
-  const handleAddNote = (text: string) => {
-    addNote({ taskId, text })
+  // Deduped by id since the realtime echo for this same insert can land first
+  // (it now carries the same real attachments already inserted, so a plain
+  // no-op on that branch is correct — see handleActivityChanged above).
+  const handleAddNote = (text: string, attachments: Attachment[]) => {
+    addNote({ taskId, text, attachments })
       .then((result) => {
         if (!result.ok) {
           showToast(result.error, "error");
@@ -460,6 +463,7 @@ export function TaskDetailView({
                   text,
                   edited: false,
                   pinned: false,
+                  attachments,
                   createdAt: new Date(result.createdAt),
                 },
               ],

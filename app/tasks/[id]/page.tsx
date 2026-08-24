@@ -30,7 +30,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
     insforge.database.from("profiles").select("id, name").order("name"),
     insforge.database
       .from("activities")
-      .select("id, kind, who, text, edited, pinned, created_at")
+      .select("id, kind, who, text, edited, pinned, attachments, created_at")
       .eq("task_id", task.id)
       .order("created_at", { ascending: false }),
   ]);
@@ -54,6 +54,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
     text: a.text,
     edited: a.edited,
     pinned: a.pinned,
+    attachments: a.attachments ?? [],
     createdAt: new Date(a.created_at),
   }));
 

@@ -1,4 +1,4 @@
-import type { ActivityKind } from "@/types";
+import type { ActivityKind, Attachment } from "@/types";
 import type { TimelineEntry } from "./types";
 
 export interface ActivityRow {
@@ -9,6 +9,7 @@ export interface ActivityRow {
   text: string;
   edited: boolean;
   pinned: boolean;
+  attachments: Attachment[];
   created_at: string;
 }
 
@@ -25,6 +26,13 @@ export function timelineEntryFromRow(row: ActivityRow, profileNameById: Map<stri
     text: row.text,
     edited: row.edited,
     pinned: row.pinned,
+    attachments: row.attachments ?? [],
     createdAt: new Date(row.created_at),
   };
+}
+
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }

@@ -56,7 +56,7 @@ A timeline view of the same tasks: one row per task, a horizontal bar spanning `
 ### Task Detail
 Opens from My Activities, Kanban, Gantt, or direct link. Two panels:
 - **Details** — name (no character limit), description (free text, no character limit), project, owner, status, start/end/delivery dates, progress, blocker owner (free text) when status is Blocked. Editing a field saves immediately and appends a system activity row (e.g. "Jane changed status to In Progress") — except description and blocker owner, both free-text fields that save on blur without their own activity row. The "Follow" button toggles the same `tasks.flagged` value shown as the flag icon on My Activities' row and the Kanban card — one shared state, not a per-page copy.
-- **Activity** — a reverse-chronological, append-only timeline mixing system events (status/owner/progress/completion changes) and user notes. Notes can be added, edited, or deleted by their author only; **any** signed-in user can pin/unpin any note. Pinned notes float to the top. New activity (from any connected user) appears live via Realtime, no refresh needed.
+- **Activity** — a reverse-chronological, append-only timeline mixing system events (status/owner/progress/completion changes) and user notes. Notes can be added, edited, or deleted by their author only; **any** signed-in user can pin/unpin any note. Pinned notes float to the top. New activity (from any connected user) appears live via Realtime, no refresh needed. A note can also carry file attachments (any file type, up to 25MB each, 10 per note), added via the paperclip button in the compose toolbar and locked in once the note is sent; a third filter pill, **Attachments**, narrows the timeline to notes that have at least one. See `architecture.md`'s "Note Attachments" section for the storage/RLS design.
 
 Setting `delivery_date` to a date later than `end_date` automatically flips the task's status to **Delayed** instead of **Done**, and logs that auto-flip as a system activity row.
 
@@ -96,6 +96,7 @@ Role is chosen up front when an account is created via the in-app User Managemen
 - Gantt chart with overrun/early/delivery-date/today-line rendering
 - Task Detail with field editing and an append-only activity/notes timeline, live-updating across users
 - Note pinning (anyone), note edit/delete (author only)
+- File attachments on notes (Task Detail): upload to a private InsForge Storage bucket, an Attachments filter on the Activity timeline
 - Delayed-auto-flip rule when delivery date is set past the end date
 - Executive Dashboard: KPIs, filters, lenses, charts/tables computed from operational data
 - PostHog event tracking (see below)
@@ -106,7 +107,7 @@ Role is chosen up front when an account is created via the in-app User Managemen
 - OAuth login (Google/GitHub, etc.) — email/password only
 - Real notification system / bell dropdown — bell icon is static
 - @mention parsing in notes
-- File attachments on notes or tasks (InsForge Storage is provisioned but unused in v1)
+- File attachments on tasks directly (independent of a note) — attachments are scoped to notes only, see Task Detail above
 - "Duplicate" action on Initiatives/Projects
 - Multi-tenancy / multiple workspaces
 - Pagination anywhere

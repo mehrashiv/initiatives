@@ -69,7 +69,7 @@ types/
 |---|---|
 | Auth (sessions, password login) | InsForge Auth |
 | All application data | InsForge Postgres, enforced by RLS |
-| File storage | InsForge Storage (provisioned, **unused in v1** — reserved for a possible future note/task attachment feature) |
+| File storage | InsForge Storage — private `task-attachments` bucket, used by note attachments (Features 31–32; see "Note Attachments" below) |
 | Live updates | InsForge Realtime — **only** for the Tasks page (Kanban + Gantt, one shared subscription) and the Task Detail activity timeline |
 | Event analytics | PostHog |
 | AI summaries | Not built. Future: OpenAI GPT-4o, surface TBD |
@@ -131,15 +131,16 @@ tasks (
 )
 
 activities (
-  id          uuid primary key default gen_random_uuid(),
-  task_id     uuid not null references tasks(id) on delete cascade,
-  kind        text not null
-              check (kind in ('created','status','owner','progress','completed','flag','note')),
-  who         uuid not null references profiles(id),
-  text        text not null,    -- system-generated description for non-note kinds; note body for 'note'
-  edited      boolean not null default false,
-  pinned      boolean not null default false,
-  created_at  timestamptz not null default now()
+  id           uuid primary key default gen_random_uuid(),
+  task_id      uuid not null references tasks(id) on delete cascade,
+  kind         text not null
+               check (kind in ('created','status','owner','progress','completed','flag','note')),
+  who          uuid not null references profiles(id),
+  text         text not null,    -- system-generated description for non-note kinds; note body for 'note'
+  edited       boolean not null default false,
+  pinned       boolean not null default false,
+  attachments  jsonb not null default '[]'::jsonb,  -- Feature 32. Only ever set on kind='note' rows, written once at insert (addNote), immutable after. Each entry: { key, url, filename, mimeType, sizeBytes }
+  created_at   timestamptz not null default now()
 )
 ```
 
@@ -322,6 +323,30 @@ Task Detail page mounts
     else append (covers both INSERT and UPDATE; no need to branch on `op`)
   → on unmount: off the listener, unsubscribe, disconnect
 ```
+
+## Note Attachments (Features 31–32)
+
+A note in Task Detail's Activity timeline can carry file attachments, added via the paperclip button in the note-compose toolbar. Scoped to notes only — no general task-level attachment area independent of a note.
+
+**Data model:** no new table. `activities.attachments` (jsonb array, default `[]`) holds `{ key, url, filename, mimeType, sizeBytes }` per file, set once when the note is inserted and never mutated afterward — attachments are locked at send time; to change them, delete the note and re-add it. Riding the existing column means the note's attachments arrive for free over the existing `task-activity:${taskId}` realtime channel (it already publishes the full row) — no second channel needed. A note may be submitted with attachments and no text (`addNote`'s `text` validation is relaxed to allow empty when `attachments.length > 0`); at least one of text or an attachment is still required.
+
+**Storage:** a new private bucket, `task-attachments`. Any file type is accepted; **25 MB per file, up to 10 files per note**, both enforced client-side before upload. Custom `storage.objects` RLS — not the stock "owner-only" pattern, since any signed-in user must be able to view any note's attachments, mirroring `activities`' own "any authenticated user" SELECT rule:
+- SELECT: any `authenticated` caller (`bucket = 'task-attachments'`)
+- INSERT: `uploaded_by = auth.jwt() ->> 'sub'`
+- UPDATE: none — nothing is ever edited after upload
+- DELETE: `uploaded_by = auth.jwt() ->> 'sub'` (used by the cleanup step below)
+
+Being a private bucket, direct object GETs are **not** root-access/RLS-bypassed the way a public bucket's would be (see the storage RLS skill's "Public buckets bypass RLS on downloads" caveat) — every read goes through an authenticated request.
+
+**Upload flow:** client-side, direct to InsForge Storage via the existing authenticated browser client (`lib/insforge-client.ts`) — same precedent as the realtime subscriptions already calling InsForge directly from the browser. Paperclip → native multi-file picker → each file validated client-side (size/count caps above) → `insforge.storage.from('task-attachments').uploadAuto(file)` per file → collected as removable chips under the compose textarea (removable pre-send; this is independent of the "locked at send time" rule, which governs *after* the note is posted) → "Add note" calls `addNote({ taskId, text, attachments })`, writing the note and its attachments array in one insert. A failed upload shows an inline per-file error with retry/remove; other files in the same batch are unaffected.
+
+**Rendering:** since the bucket is private, a bare `<img src={url}>` can't authenticate — the raw `url` field is not directly browser-loadable. Each attachment renders by calling the SDK's authenticated `download()` (returns a `Blob`) and creating an object URL client-side (`URL.createObjectURL`, revoked on unmount) — images render as a thumbnail this way, other file types render as a filename/size chip whose click triggers the same `download()` call.
+
+**Deletion:** `deleteNote` (already author-only, enforced by the existing `activities` DELETE RLS) additionally removes each of the note's attachment objects from `task-attachments` via the same authenticated client before deleting the row — the deleting user is also the uploader (`uploaded_by`), so the owner-only storage DELETE policy above allows it without any privileged/admin client. Files uploaded but never sent (the user attaches, then navigates away without posting) are accepted as orphaned storage — there's no cleanup job; this project has no precedent for scheduled sweeps anywhere else, and building one is out of proportion to this feature.
+
+**Activity panel filter:** the existing All activity / Notes toggle gets a third pill, **Attachments** — notes where `jsonb_array_length(attachments) > 0`.
+
+**No new PostHog event.** `note_added` already fires on every `addNote` call and now covers notes with attachments too; the locked events table in `project-overview.md` doesn't gain a row for this.
 
 ## Authentication
 

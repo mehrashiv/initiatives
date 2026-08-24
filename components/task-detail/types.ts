@@ -1,4 +1,11 @@
-import type { ActivityKind, TaskStatus } from "@/types";
+import type { ActivityKind, Attachment, TaskStatus } from "@/types";
+
+// A file picked in the compose area, already uploaded to storage (real key/url)
+// but not yet attached to a posted note. previewUrl is a local object URL from
+// the original File, for an instant compose-time thumbnail — never persisted.
+export interface PendingAttachment extends Attachment {
+  previewUrl?: string;
+}
 
 export interface TimelineEntry {
   id: string;
@@ -8,6 +15,7 @@ export interface TimelineEntry {
   text: string;
   edited: boolean;
   pinned: boolean;
+  attachments: Attachment[];
   createdAt: Date;
 }
 

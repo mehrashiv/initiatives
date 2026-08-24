@@ -72,6 +72,16 @@ export type ActivityKind =
   | "flag"
   | "note";
 
+export const TASK_ATTACHMENTS_BUCKET = "task-attachments";
+
+export interface Attachment {
+  key: string;
+  url: string;
+  filename: string;
+  mimeType: string;
+  sizeBytes: number;
+}
+
 export interface Activity {
   id: string;
   task_id: string;
@@ -80,5 +90,6 @@ export interface Activity {
   text: string;
   edited: boolean;
   pinned: boolean;
+  attachments: Attachment[];
   created_at: string;
 }

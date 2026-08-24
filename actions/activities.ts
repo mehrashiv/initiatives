@@ -4,6 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { getServerClient } from "@/lib/insforge-server";
 import { getPostHogClient } from "@/lib/posthog-server";
+import { TASK_ATTACHMENTS_BUCKET, type Attachment } from "@/types";
 
 async function requireUser() {
   const insforge = await getServerClient();
@@ -20,20 +21,33 @@ function revalidateTaskPaths(taskId: string) {
 
 const permissionError = "You don't have permission to do that.";
 
-const addNoteSchema = z.object({
-  taskId: z.string().uuid(),
-  text: z.string().trim().min(1, "Note text is required"),
+const attachmentSchema = z.object({
+  key: z.string().min(1),
+  url: z.string().min(1),
+  filename: z.string().min(1),
+  mimeType: z.string().min(1),
+  sizeBytes: z.number().int().positive(),
 });
+
+const addNoteSchema = z
+  .object({
+    taskId: z.string().uuid(),
+    text: z.string().trim(),
+    attachments: z.array(attachmentSchema).max(10).default([]),
+  })
+  .refine((v) => v.text.length > 0 || v.attachments.length > 0, {
+    message: "Note text or at least one attachment is required",
+  });
 
 export async function addNote(
   input: z.infer<typeof addNoteSchema>,
 ): Promise<{ ok: true; id: string; createdAt: string } | { ok: false; error: string }> {
-  const { taskId, text } = addNoteSchema.parse(input);
+  const { taskId, text, attachments } = addNoteSchema.parse(input);
   const { insforge, user } = await requireUser();
 
   const { data, error } = await insforge.database
     .from("activities")
-    .insert({ task_id: taskId, kind: "note", who: user.id, text })
+    .insert({ task_id: taskId, kind: "note", who: user.id, text, attachments })
     .select("id, created_at");
   if (error || !data || data.length === 0) return { ok: false, error: "Failed to add note." };
 
@@ -79,9 +93,21 @@ export async function deleteNote(
   const { taskId, activityId } = deleteNoteSchema.parse(input);
   const { insforge } = await requireUser();
 
-  const { data, error } = await insforge.database.from("activities").delete().eq("id", activityId).select("id");
+  const { data, error } = await insforge.database
+    .from("activities")
+    .delete()
+    .eq("id", activityId)
+    .select("id, attachments");
   if (error) return { ok: false, error: "Failed to delete note." };
   if (!data || data.length === 0) return { ok: false, error: permissionError };
+
+  // Best-effort cleanup: the note row is already gone, so a failed remove() here
+  // just leaves an orphaned object rather than blocking the delete the user asked for.
+  const attachments = (data[0].attachments ?? []) as Attachment[];
+  if (attachments.length > 0) {
+    const bucket = insforge.storage.from(TASK_ATTACHMENTS_BUCKET);
+    await Promise.all(attachments.map((a) => bucket.remove(a.key).catch(() => undefined)));
+  }
 
   revalidateTaskPaths(taskId);
   return { ok: true };
