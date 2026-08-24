@@ -17,7 +17,13 @@ export function LoginForm() {
     setError(null);
     setPending(true);
     try {
-      await login({ email, password });
+      const result = await login({ email, password });
+      if (result?.error) {
+        posthog.capture("user_login_failed", { email, error: result.error });
+        setError(result.error);
+        setPending(false);
+        return;
+      }
       posthog.identify(email, { email });
       posthog.capture("user_logged_in", { email });
       router.push("/my-activities");
