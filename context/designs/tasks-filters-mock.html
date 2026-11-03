@@ -1,0 +1,328 @@
+<title>Tasks Filters Mock</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: the real Tasks page (navbar, header, filter row, Kanban/Gantt), with the new filter row as the focus. Light only, matching the app. */
+:root {
+  --accent: #0E4EAF; --accent-hover: #0A3C87; --accent-light: #DCE8FB; --accent-lightest: #EEF4FE;
+  --success: #35D39A; --success-dark: #1E8C66; --success-light: #D6F5E9;
+  --warning: #FF6600; --warning-light: #FFE7D4;
+  --danger: #EC394C; --danger-light: #FCE0E3;
+  --ink: #001E2D; --slate: #4D626C; --faint: #6B8295;
+  --surface: #FFFFFF; --subtle: #F6F8FB; --inset: #EEF2F8;
+  --border: #DCE3ED; --border-strong: #C2CEDD;
+  --note-bg: #FFF8E6; --note-border: #F2D58A; --note-ink: #6A4B00;
+  --shadow-xs: 0 1px 2px rgba(0,30,45,.06);
+  --shadow-lg: 0 12px 32px rgba(0,30,45,.14);
+  --cta: linear-gradient(135deg, #EC394C 0%, #FF6600 100%);
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--subtle); color: var(--ink); font-family: var(--font); font-size: 14px; }
+button { font-family: inherit; color: inherit; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.mock-note { background: var(--note-bg); border-bottom: 1px solid var(--note-border); color: var(--note-ink); font-size: 13px; padding-block: 9px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.mock-note b { font-weight: 600; }
+
+.nav { background: var(--surface); border-bottom: 1px solid var(--border); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.nav-in { max-width: 1440px; margin: 0 auto; height: 64px; display: flex; align-items: center; gap: 28px; }
+.logo { font-weight: 700; font-size: 24px; color: var(--accent); letter-spacing: -0.03em; }
+.logo span { color: var(--danger); }
+.links { display: flex; gap: 6px; overflow-x: auto; }
+.links a { padding: 8px 12px; border-radius: 999px; color: var(--slate); font-weight: 500; text-decoration: none; white-space: nowrap; font-size: 15px; }
+.links a.on { background: var(--accent-lightest); color: var(--accent); font-weight: 600; }
+.avatar-me { margin-left: auto; width: 36px; height: 36px; border-radius: 50%; background: var(--danger); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; flex: none; }
+
+main { max-width: 1440px; margin: 0 auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+h1 { margin: 0 0 5px; font-size: 36px; font-weight: 600; letter-spacing: -0.02em; }
+.sub { color: var(--slate); font-size: 16px; margin: 0; }
+.cta { border: 0; border-radius: 999px; padding: 12px 20px; color: #fff; font-weight: 700; font-size: 14px; background: var(--cta); box-shadow: 0 6px 18px rgba(236,57,76,.3); cursor: pointer; }
+
+/* New filter row */
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 20px; }
+.dd { position: relative; }
+.trigger { display: inline-flex; align-items: center; gap: 8px; min-width: 176px; border: 1px solid var(--border); background: var(--surface); border-radius: 999px; padding: 9px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-align: left; }
+.trigger .lbl { color: var(--faint); font-weight: 600; font-size: 12px; }
+.trigger .val { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
+.trigger.set { border-color: var(--accent); background: var(--accent-lightest); color: var(--accent); }
+.trigger.set .lbl { color: var(--accent); }
+.chev { width: 16px; height: 16px; flex: none; color: var(--faint); }
+.count { background: var(--accent); color: #fff; border-radius: 999px; font-size: 11px; font-weight: 700; padding: 1px 7px; }
+.menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; min-width: 260px; max-height: 320px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-lg); padding: 6px; }
+.menu-head { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px 8px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.menu-head button { border: 0; background: none; color: var(--accent); font-size: 12px; font-weight: 600; text-transform: none; letter-spacing: 0; cursor: pointer; padding: 0; }
+.opt { display: flex; width: 100%; align-items: center; gap: 10px; border: 0; background: none; padding: 7px 10px; border-radius: 8px; font-size: 13.5px; text-align: left; cursor: pointer; }
+.opt:hover { background: var(--subtle); }
+.opt.on { background: var(--accent-lightest); }
+.opt .grow { flex: 1; }
+.opt .meta { color: var(--faint); font-size: 12px; }
+.box { width: 16px; height: 16px; border: 1.5px solid var(--border-strong); border-radius: 4px; display: grid; place-items: center; flex: none; background: var(--surface); }
+.opt.on .box { background: var(--accent); border-color: var(--accent); }
+.box svg { width: 11px; height: 11px; color: #fff; display: none; }
+.opt.on .box svg { display: block; }
+.tick { width: 16px; height: 16px; color: var(--accent); visibility: hidden; }
+.opt.on .tick { visibility: visible; }
+.group-label { padding: 8px 10px 4px; font-size: 11px; font-weight: 700; color: var(--faint); letter-spacing: .06em; text-transform: uppercase; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.ini { width: 22px; height: 22px; border-radius: 50%; background: var(--accent-lightest); color: var(--accent); font-size: 10px; font-weight: 700; display: grid; place-items: center; flex: none; }
+.clear { border: 0; background: none; color: var(--accent); font-weight: 600; font-size: 13.5px; cursor: pointer; padding: 8px 4px; }
+.backdrop { position: fixed; inset: 0; z-index: 10; }
+
+.seg { margin-left: auto; display: inline-flex; gap: 3px; background: var(--inset); padding: 3px; border-radius: 999px; }
+.seg button { border: 0; background: transparent; border-radius: 999px; padding: 7px 15px; font-size: 13px; font-weight: 600; color: var(--slate); cursor: pointer; }
+.seg button.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-xs); }
+
+/* Kanban */
+.board-wrap { overflow-x: auto; padding-bottom: 8px; }
+.board { display: flex; gap: 14px; align-items: flex-start; }
+.col { flex: 1 0 260px; max-width: 340px; background: var(--subtle); border: 1px solid var(--border); border-radius: 12px; padding: 12px; min-height: 120px; }
+.col-h { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; margin-bottom: 10px; padding: 2px 2px 0; }
+.col-h .n { margin-left: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; font-size: 11px; padding: 1px 8px; color: var(--slate); }
+.card { background: var(--surface); border: 1px solid var(--border); border-left-width: 4px; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--shadow-xs); }
+.card h4 { margin: 0 0 3px; font-size: 14px; font-weight: 600; line-height: 1.3; }
+.card .proj { color: var(--slate); font-size: 12.5px; margin-bottom: 10px; }
+.bar { height: 4px; background: var(--inset); border-radius: 999px; overflow: hidden; margin-bottom: 10px; }
+.bar i { display: block; height: 100%; }
+.card .foot { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--faint); }
+.card .foot .late { color: var(--danger); font-weight: 600; }
+.drop { border: 1.5px dashed var(--border-strong); border-radius: 8px; padding: 22px; text-align: center; color: var(--faint); font-size: 13px; }
+
+/* Gantt (simplified) */
+.gantt { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; }
+.g-row { display: grid; grid-template-columns: minmax(180px, 280px) minmax(420px, 1fr); border-top: 1px solid var(--border); align-items: center; }
+.g-row:first-child { border-top: 0; }
+.g-name { padding: 10px 14px; font-size: 13px; font-weight: 600; min-width: 0; }
+.g-name small { display: block; color: var(--faint); font-weight: 500; font-size: 12px; }
+.g-track { position: relative; height: 40px; border-left: 1px solid var(--border); }
+.g-bar { position: absolute; top: 12px; height: 16px; border-radius: 999px; }
+.g-today { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--danger); opacity: .55; }
+.g-axis { display: grid; grid-template-columns: minmax(180px, 280px) minmax(420px, 1fr); background: var(--subtle); font-size: 11px; font-weight: 700; color: var(--faint); letter-spacing: .06em; text-transform: uppercase; }
+.g-axis div { padding: 9px 14px; }
+.g-axis .months { display: flex; justify-content: space-between; border-left: 1px solid var(--border); }
+
+.empty { background: var(--surface); border: 1.5px dashed var(--border); border-radius: 12px; padding: 56px 16px; text-align: center; }
+.empty h3 { margin: 0 0 6px; font-size: 18px; }
+.empty p { margin: 0 0 14px; color: var(--slate); }
+.empty button { border: 1px solid var(--border); background: var(--surface); border-radius: 999px; padding: 8px 16px; font-weight: 600; cursor: pointer; }
+
+@media (max-width: 640px) {
+  h1 { font-size: 28px; }
+  .seg { margin-left: 0; }
+  .trigger { min-width: 0; }
+  .menu { min-width: 240px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="mock-note"><b>Mockup</b> · Features 33 and 34, Tasks page filters. Sample data copied from your real projects and tasks. Click the filters to try them; nothing here saves.</div>
+
+<nav class="nav"><div class="nav-in">
+  <div class="logo"><span>(</span>nile</div>
+  <div class="links"><a>My Activities</a><a>Dashboard</a><a>Initiatives</a><a>Projects</a><a class="on">Tasks</a></div>
+  <div class="avatar-me">SM</div>
+</div></nav>
+
+<main>
+  <div class="head">
+    <div><h1>Tasks</h1><p class="sub" id="sub"></p></div>
+    <button class="cta" type="button">+ New task</button>
+  </div>
+
+  <div class="filters" id="filters"></div>
+  <div id="view"></div>
+</main>
+
+<script>
+const TODAY = new Date(2026, 10, 3);
+const STATUSES = [
+  { id: "to_do", label: "To Do", color: "#4D626C" },
+  { id: "in_progress", label: "In Progress", color: "#0E4EAF" },
+  { id: "blocked", label: "Blocked", color: "#EC394C" },
+  { id: "delayed", label: "Delayed", color: "#FF6600" },
+  { id: "done", label: "Done", color: "#1E8C66" },
+];
+const PROJECTS = {
+  "Alerting": "Collateral", "Authentication": "Collateral",
+  "Nabors": "Customer Engagements", "Randstad RFP": "Customer Engagements", "Singapore Airlines": "Customer Engagements", "UST Australia": "Customer Engagements",
+  "Tech Docs Cleanup": "Documentation", "Update Monitoring and Troubleshooting Guide": "Documentation", "Update Setup and Integration": "Documentation",
+  "Green Belt Series": "Hands On Lab", "HOL Infrastruture": "Hands On Lab", "Reservation System": "Hands On Lab", "White Belt Series": "Hands On Lab",
+  "WIPS Demo": "Nile Experience Center",
+  "NOM - BOM Calculator": "Nile Operating Model", "NOM - Wireless and Wired Design Agent": "Nile Operating Model",
+  "Nile RADIUS": "Service Owner", "Q4 2026 Newsletter": "Service Owner",
+};
+const INITIATIVES = [...new Set(Object.values(PROJECTS))].sort();
+const OWNERS = ["Dipen Vardhe", "Mak Moussa", "Shiv Mehra", "Sreeram Sridharan", "Srinivas Neerukonda", "Vaibhav Sharma"];
+// [name, status, project, owner, start, end, progress]
+const TASKS = [
+  ["Copy Datasheets to Techdocs", "to_do", "Tech Docs Cleanup", "Srinivas Neerukonda", "2026-09-10", "2026-09-18", 0],
+  ["Port Span Documentation", "to_do", "Tech Docs Cleanup", "Srinivas Neerukonda", "2026-09-11", "2026-09-18", 0],
+  ["Alerting - Tech Docs", "blocked", "Alerting", "Srinivas Neerukonda", "2026-09-22", "2026-10-02", 20],
+  ["Wireless MAC Auth Deck", "in_progress", "Authentication", "Vaibhav Sharma", "2026-10-12", "2026-10-23", 40],
+  ["Wireless MAC Auth - Tech Doc", "to_do", "Authentication", "Vaibhav Sharma", "2026-10-14", "2026-10-23", 0],
+  ["Document Archbee - Setup RDP via Cloudflare", "in_progress", "HOL Infrastruture", "Sreeram Sridharan", "2026-10-24", "2026-10-30", 55],
+  ["Configure RDP via Cloudflare for clients on Workshop 1", "done", "HOL Infrastruture", "Sreeram Sridharan", "2026-10-24", "2026-10-29", 100],
+  ["Nile Workshop 1", "done", "HOL Infrastruture", "Sreeram Sridharan", "2026-10-19", "2026-10-22", 100],
+  ["Reservations - Bugs and Enhancements", "done", "Reservation System", "Shiv Mehra", "2026-10-23", "2026-11-01", 100],
+  ["Reservations - Beta Deployment", "delayed", "Reservation System", "Shiv Mehra", "2026-10-21", "2026-10-22", 80],
+  ["Nile Workshop 2", "done", "White Belt Series", "Sreeram Sridharan", "2026-10-12", "2026-10-16", 100],
+  ["WIPS Lab", "done", "Green Belt Series", "Sreeram Sridharan", "2026-10-09", "2026-10-16", 100],
+  ["Update Wired Setup Guides", "in_progress", "Update Setup and Integration", "Srinivas Neerukonda", "2026-10-27", "2026-11-04", 30],
+  ["docs - Update English and Grammar", "in_progress", "Tech Docs Cleanup", "Srinivas Neerukonda", "2026-10-28", "2026-11-06", 25],
+  ["Build the Newsletter for Q4 2026", "in_progress", "Q4 2026 Newsletter", "Srinivas Neerukonda", "2026-10-30", "2026-11-10", 15],
+  ["docs - Update screenshots", "to_do", "Tech Docs Cleanup", "Srinivas Neerukonda", "2026-11-05", "2026-11-13", 0],
+  ["Update Monitoring and Troubleshooting", "to_do", "Update Monitoring and Troubleshooting Guide", "Srinivas Neerukonda", "2026-11-04", "2026-11-13", 0],
+  ["Training Video for Enterprise Wireless and Wired Design", "to_do", "NOM - Wireless and Wired Design Agent", "Srinivas Neerukonda", "2026-11-03", "2026-11-13", 0],
+  ["NOM - Site Survey Guidelines for K12", "in_progress", "NOM - Wireless and Wired Design Agent", "Srinivas Neerukonda", "2026-11-02", "2026-11-20", 10],
+  ["NOM - Site Survey Guidelines for Stadium", "to_do", "NOM - Wireless and Wired Design Agent", "Srinivas Neerukonda", "2026-11-25", "2026-12-10", 0],
+  ["Alerts - Deck", "done", "Alerting", "Dipen Vardhe", "2026-09-10", "2026-09-18", 100],
+  ["Create Mock for Jamf Integration", "done", "Nile RADIUS", "Shiv Mehra", "2026-08-28", "2026-09-04", 100],
+  ["Raspberry Pi AP Setup", "done", "WIPS Demo", "Shiv Mehra", "2026-08-20", "2026-08-28", 100],
+].map(([name, status, project, owner, start, end, progress]) => ({ name, status, project, owner, start: d(start), end: d(end), progress }));
+
+function d(s) { const [y, m, dd] = s.split("-").map(Number); return new Date(y, m - 1, dd); }
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const short = (x) => `${MONTHS[x.getMonth()]} ${x.getDate()}`;
+const initials = (n) => { const p = n.split(" "); return (p[0][0] + p[p.length - 1][0]).toUpperCase(); };
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg>';
+const TICK = '<svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>';
+
+const state = { initiative: "", projects: new Set(), owners: new Set(), statuses: new Set(), open: null, view: "kanban" };
+
+function projectOptions() {
+  return Object.keys(PROJECTS).filter((p) => !state.initiative || PROJECTS[p] === state.initiative).sort();
+}
+function filtered() {
+  return TASKS.filter((t) =>
+    (!state.initiative || PROJECTS[t.project] === state.initiative) &&
+    (!state.projects.size || state.projects.has(t.project)) &&
+    (!state.owners.size || state.owners.has(t.owner)) &&
+    (!state.statuses.size || state.statuses.has(t.status)));
+}
+function anySet() { return state.initiative || state.projects.size || state.owners.size || state.statuses.size; }
+function summary(set, all, noun, labelOf = (x) => x) {
+  if (!set.size) return `All ${noun}`;
+  if (set.size === 1) return labelOf([...set][0]);
+  return `${set.size} ${noun}`;
+}
+
+function trigger(key, label, value, isSet, countN) {
+  return `<button type="button" class="trigger${isSet ? " set" : ""}" data-open="${key}" aria-expanded="${state.open === key}">
+    <span class="lbl">${label}</span><span class="val">${esc(value)}</span>${countN > 1 ? `<span class="count">${countN}</span>` : ""}${CHEV}</button>`;
+}
+
+function menu(key) {
+  if (key === "initiative") {
+    const rows = [["", "All initiatives"], ...INITIATIVES.map((i) => [i, i])].map(([id, label]) => {
+      const n = Object.values(PROJECTS).filter((x) => !id || x === id).length;
+      return `<button type="button" class="opt${state.initiative === id ? " on" : ""}" data-init="${esc(id)}"><span class="grow">${esc(label)}</span><span class="meta">${n} projects</span>${TICK}</button>`;
+    }).join("");
+    return `<div class="menu" role="listbox"><div class="menu-head">Initiative · pick one</div>${rows}</div>`;
+  }
+  const multi = (title, items, set, attr, render) => `<div class="menu"><div class="menu-head">${title}${set.size ? `<button type="button" data-clear="${attr}">Clear</button>` : ""}</div>${items.map((it) =>
+    `<button type="button" class="opt${set.has(it) ? " on" : ""}" data-${attr}="${esc(it)}"><span class="box">${CHECK}</span>${render(it)}</button>`).join("")}</div>`;
+  if (key === "projects") {
+    const items = projectOptions();
+    const head = state.initiative ? `Projects in ${esc(state.initiative)}` : "Projects · pick any";
+    return multi(head, items, state.projects, "proj", (p) => `<span class="grow">${esc(p)}</span>${state.initiative ? "" : `<span class="meta">${esc(PROJECTS[p])}</span>`}`);
+  }
+  if (key === "owners") return multi("Owners · pick any", OWNERS, state.owners, "own", (o) => `<span class="ini">${initials(o)}</span><span class="grow">${esc(o)}</span>`);
+  if (key === "status") return multi("Status · pick any", STATUSES.map((s) => s.id), state.statuses, "stat", (id) => {
+    const s = STATUSES.find((x) => x.id === id);
+    return `<span class="dot" style="background:${s.color}"></span><span class="grow">${s.label}</span>`;
+  });
+}
+
+function renderFilters() {
+  const statusLabel = (id) => STATUSES.find((s) => s.id === id).label;
+  const parts = [
+    ["initiative", "Initiative", state.initiative || "All initiatives", !!state.initiative, 0],
+    ["projects", "Projects", summary(state.projects, null, "projects"), state.projects.size > 0, state.projects.size],
+    ["owners", "Owners", summary(state.owners, null, "owners"), state.owners.size > 0, state.owners.size],
+    ["status", "Status", summary(state.statuses, null, "statuses", statusLabel), state.statuses.size > 0, state.statuses.size],
+  ].map(([k, l, v, s, n]) => `<div class="dd">${trigger(k, l, v, s, n)}${state.open === k ? menu(k) : ""}</div>`).join("");
+  const seg = `<div class="seg"><button type="button" class="${state.view === "kanban" ? "on" : ""}" data-view="kanban">Kanban</button><button type="button" class="${state.view === "gantt" ? "on" : ""}" data-view="gantt">Gantt</button></div>`;
+  document.getElementById("filters").innerHTML =
+    (state.open ? `<div class="backdrop" data-close="1"></div>` : "") + parts +
+    (anySet() ? `<button type="button" class="clear" data-clearall="1">Clear filters</button>` : "") + seg;
+}
+
+function card(t) {
+  const s = STATUSES.find((x) => x.id === t.status);
+  const late = t.status !== "done" && t.end < TODAY;
+  return `<div class="card" style="border-left-color:${s.color}"><h4>${esc(t.name)}</h4><div class="proj">${esc(t.project)}</div>
+    <div class="bar"><i style="width:${t.progress}%;background:${s.color}"></i></div>
+    <div class="foot"><span class="ini" title="${esc(t.owner)}">${initials(t.owner)}</span><span class="${late ? "late" : ""}">Due ${short(t.end)}</span></div></div>`;
+}
+
+function renderView() {
+  const tasks = filtered();
+  const scopedTotal = TASKS.length;
+  document.getElementById("sub").textContent = anySet()
+    ? `${tasks.length} of ${scopedTotal} tasks match these filters`
+    : `${scopedTotal} tasks across your projects`;
+  const view = document.getElementById("view");
+  if (!tasks.length) {
+    view.innerHTML = `<div class="empty"><h3>No tasks match these filters</h3><p>Try removing a filter, or clear them all.</p><button type="button" data-clearall="1">Clear filters</button></div>`;
+    return;
+  }
+  if (state.view === "kanban") {
+    const cols = STATUSES.filter((s) => !state.statuses.size || state.statuses.has(s.id));
+    view.innerHTML = `<div class="board-wrap"><div class="board">${cols.map((s) => {
+      const items = tasks.filter((t) => t.status === s.id).sort((a, b) => a.end - b.end);
+      return `<div class="col"><div class="col-h"><span class="dot" style="background:${s.color}"></span>${s.label}<span class="n">${items.length}</span></div>${items.length ? items.map(card).join("") : `<div class="drop">Drop here</div>`}</div>`;
+    }).join("")}</div></div>`;
+    return;
+  }
+  const min = new Date(Math.min(...tasks.map((t) => t.start)));
+  const max = new Date(Math.max(...tasks.map((t) => t.end), TODAY));
+  min.setDate(min.getDate() - 3); max.setDate(max.getDate() + 3);
+  const span = max - min;
+  const pct = (x) => ((x - min) / span) * 100;
+  const months = [];
+  for (let m = new Date(min.getFullYear(), min.getMonth(), 1); m <= max; m.setMonth(m.getMonth() + 1)) months.push(MONTHS[m.getMonth()]);
+  view.innerHTML = `<div class="gantt"><div class="g-axis"><div>Task</div><div class="months">${months.map((m) => `<span>${m}</span>`).join("")}</div></div>${
+    [...tasks].sort((a, b) => a.start - b.start).map((t) => {
+      const s = STATUSES.find((x) => x.id === t.status);
+      return `<div class="g-row"><div class="g-name">${esc(t.name)}<small>${esc(t.project)} · ${esc(t.owner)}</small></div>
+        <div class="g-track"><div class="g-today" style="left:${pct(TODAY)}%"></div><div class="g-bar" style="left:${pct(t.start)}%;width:${Math.max(pct(t.end) - pct(t.start), 1.2)}%;background:${s.color}"></div></div></div>`;
+    }).join("")}</div>`;
+}
+
+function render() { renderFilters(); renderView(); }
+
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("button, .backdrop");
+  if (!el) return;
+  const ds = el.dataset;
+  if (ds.close) state.open = null;
+  else if (ds.open) state.open = state.open === ds.open ? null : ds.open;
+  else if ("init" in ds) {
+    state.initiative = ds.init;
+    // Prune: drop selected projects that no longer belong to the chosen initiative.
+    const allowed = new Set(projectOptions());
+    for (const p of [...state.projects]) if (!allowed.has(p)) state.projects.delete(p);
+    state.open = null;
+  }
+  else if ("proj" in ds) toggle(state.projects, ds.proj);
+  else if ("own" in ds) toggle(state.owners, ds.own);
+  else if ("stat" in ds) toggle(state.statuses, ds.stat);
+  else if (ds.clear) ({ proj: state.projects, own: state.owners, stat: state.statuses })[ds.clear].clear();
+  else if (ds.clearall) { state.initiative = ""; state.projects.clear(); state.owners.clear(); state.statuses.clear(); state.open = null; }
+  else if (ds.view) state.view = ds.view;
+  else return;
+  render();
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && state.open) { state.open = null; render(); } });
+function toggle(set, v) { set.has(v) ? set.delete(v) : set.add(v); }
+
+// Open on a realistic working state: one initiative, two statuses.
+state.initiative = "Hands On Lab";
+state.statuses = new Set(["in_progress", "done"]);
+render();
+</script>

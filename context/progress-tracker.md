@@ -4,8 +4,8 @@ This file is updated as the build proceeds — it is the running record of what'
 
 ## Current Status
 
-- **Phase:** Phase 9 — Note Attachments (complete — all 2 features shipped)
-- **Last completed feature:** 32. Note attachments real data + storage logic.
+- **Phase:** Phase 10 — Tasks Filters (complete — all 2 features shipped)
+- **Last completed feature:** 34. Tasks filter logic (2026-11-03). Built from `docs/specs/0001-tasks-filter-saved-state/index.md`; `/check review` approved with nits (`docs/reviews/2026-11-03-main.md`), `/check verify` passed all 15 acceptance criteria live, and `npm test` covers AC-1 to AC-15. Code in `components/tasks/filter-state.ts`, `components/tasks/tasks-view.tsx`, `app/tasks/page.tsx`, `components/layout/navigation-tracker.tsx`, `components/task-detail/task-detail-view.tsx`, `components/shared/toast.tsx`.
 - **Next up:** None — build plan complete.
 
 ## Progress Checklist
@@ -59,6 +59,10 @@ This file is updated as the build proceeds — it is the running record of what'
 ### Phase 9 — Note Attachments
 - [x] 31. Note attachments UI (mock data)
 - [x] 32. Note attachments real data + storage logic
+
+### Phase 10 — Tasks Filters
+- [x] 33. Tasks filter bar UI
+- [x] 34. Tasks filter logic
 
 ## Decisions Made During Build
 

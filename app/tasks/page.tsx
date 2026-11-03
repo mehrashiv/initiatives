@@ -2,9 +2,14 @@ import { redirect } from "next/navigation";
 import { getServerClient } from "@/lib/insforge-server";
 import { TasksView } from "@/components/tasks/tasks-view";
 import { boardTaskFromRow } from "@/components/tasks/task-helpers";
+import { parseTasksQuery, sanitizeState } from "@/components/tasks/filter-state";
 import type { ProjectOption } from "@/components/shared/new-task-modal";
 
-export default async function TasksPage() {
+export default async function TasksPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const insforge = await getServerClient();
   const { data } = await insforge.auth.getCurrentUser();
   if (!data.user) redirect("/login");
@@ -57,14 +62,32 @@ export default async function TasksPage() {
 
   const currentUserName = data.user.profile?.name ?? data.user.email;
 
+  const initiativeOptions = [...(initiatives ?? [])]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((it) => ({ id: it.id, name: it.name }));
+  const projectInitiativeIds = Object.fromEntries((projects ?? []).map((p) => [p.id, p.initiative_id]));
+
+  // View and filters from the URL, checked against the ids fetched above so stale links heal themselves.
+  const { raw, hasQuery } = parseTasksQuery(await searchParams);
+  const initialState = sanitizeState(raw, {
+    projectIds: (projects ?? []).map((p) => p.id),
+    initiativeIds: (initiatives ?? []).map((it) => it.id),
+    ownerIds: (profiles ?? []).map((p) => p.id),
+    projectInitiativeIds,
+  });
+
   return (
     <TasksView
       initialTasks={boardTasks}
       projectOptions={projectOptions}
       activeProjectOptions={activeProjectOptions}
+      initiativeOptions={initiativeOptions}
+      projectInitiativeIds={projectInitiativeIds}
       profiles={profiles ?? []}
       currentUserId={data.user.id}
       currentUserName={currentUserName}
+      initialState={initialState}
+      hasQuery={hasQuery}
     />
   );
 }

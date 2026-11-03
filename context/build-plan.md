@@ -150,6 +150,24 @@ Build each screen's UI first with realistic mock data, verify it visually agains
 
 ---
 
+## Phase 10 — Tasks Filters
+
+New features, not an amendment: Feature 12 (which added the original single Project `<select>`) has already shipped, so this phase replaces that dropdown rather than rewriting Feature 12's history. Mockup: `context/designs/tasks-filters-mock.html`.
+
+### 33. Tasks filter bar UI
+- **UI:** Replace the Tasks page's single Project `<select>` with a filter row of four dropdowns, same visual family as the Dashboard `FilterBar`/`FilterDropdown`: **Initiative** (single select, "All initiatives" default), **Projects** (multiselect with checkboxes), **Owners** (multiselect with checkboxes, avatar initials, shown to every role), **Status** (multiselect with checkboxes, status color dots). Each multiselect trigger summarizes its selection ("All projects", one name, or "3 projects"). A "Clear filters" link appears only when any filter is set. The Kanban/Gantt toggle stays on the same row, right aligned. Needs a new multiselect variant of `FilterDropdown` (the existing one is single select only).
+- **Done when:** all four controls render with real initiative/project/owner/status options and match the mockup; the row wraps cleanly at narrow widths.
+- **Scope adjusted during build (2026-11-03):** the filters are live in this feature, not inert: the old Project `<select>` already filtered, so shipping inert replacements would have regressed it, and the filtering itself is a few lines. Built here: AND/OR filter combination over the `viewAsRole` scoped list (both views), Initiative pruning of the Projects list (and dropping selected projects outside the chosen initiative), Kanban hiding unselected status columns, and a Clear filters link. Left for Feature 34: saved page state (URL + browser memory), the Back fallback, the empty state copy, and the filtered subtitle count. New `components/tasks/filter-pickers.tsx` (`FilterSelect` + `FilterMultiSelect`, pill trigger, same backdrop/menu mechanics and z-index family as `FilterDropdown`).
+
+### 34. Tasks filter logic
+- **Logic:** (The filtering, Initiative pruning and Kanban column hiding moved into Feature 33 during its build; see its scope note.) Empty state copy changes from "No tasks for this project filter yet" to a generic "No tasks match these filters" with a Clear filters action. Subtitle count reflects the filtered set.
+- **Saved page state (decided with the developer):** the four filters **and** the Kanban/Gantt view live in the `/tasks` URL query (e.g. `?view=gantt&initiative=…&projects=…&owners=…&status=in_progress,done`), updated with `router.replace` so each filter click doesn't add a browser history entry. This makes Task Detail's Back button (`router.back()`), the browser back button and a page refresh all return to the exact view and filters the user left. The last used state is also remembered in the browser (`localStorage`, wrapped in try/catch), so opening `/tasks` with no query (the navbar's Tasks link) restores it; "Clear filters" resets both the URL and the remembered state. Deliberately overrides Feature 11's "toggle state is local `useState`, not a URL param" decision for this page only. Query values use ids, not names; unknown ids (a deleted project, an owner no longer in `profiles`) are ignored rather than erroring. Task Detail's Back link keeps `router.back()` but falls back to `router.push("/tasks")` when there is no in-app history (task opened directly from a bookmark, new tab or link), where the remembered state then restores the view and filters.
+- **Realtime decision (settled 2026-11-03):** realtime inserted or updated tasks that miss the active filters stay hidden, with no notice; they appear once they match or the filters change. A task created from the New task modal that the filters hide gets a "Task created. Hidden by your filters." toast with a Clear filters action.
+- **Spec:** [0001](../docs/specs/0001-tasks-filter-saved-state/index.md) (the full build spec: acceptance criteria, URL format, restore flow, Back fallback, `task_filter_selected` event, build plan).
+- **Done when:** each filter narrows both views correctly, Initiative pruning works, hidden Kanban columns return when Status is cleared, and the empty state appears for a no match combination. Opening a task from a filtered Gantt view and pressing Back returns to that same Gantt view with the same filters; refreshing keeps them; clicking Tasks in the navbar restores the last used state; Clear filters resets everything.
+
+---
+
 ## Feature Count
 
 | Phase | Features |
@@ -163,4 +181,5 @@ Build each screen's UI first with realistic mock data, verify it visually agains
 | 7. My Activities | 5 |
 | 8. Dashboard | 5 |
 | 9. Note Attachments | 2 |
-| **Total** | **32** |
+| 10. Tasks Filters | 2 |
+| **Total** | **34** |
