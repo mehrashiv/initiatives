@@ -134,7 +134,7 @@ Payments currently has TypeScript SDK docs only. Use the Payments API reference 
 - Serverless functions have one endpoint and do not support nested route paths
 - Storage: Upload files to buckets, store URLs in database
 - AI integrations should call OpenRouter directly with `baseURL: "https://openrouter.ai/api/v1"` and a server-side `OPENROUTER_API_KEY`
-- **EXTRA IMPORTANT**: Use Tailwind CSS 3.4 (do not upgrade to v4). Lock these dependencies in `package.json`
+- **EXTRA IMPORTANT**: This project uses Tailwind CSS v4 (`tailwindcss ^4` with `@tailwindcss/postcss`). Tokens live in `@theme` in `app/globals.css`; there is no `tailwind.config.ts`. Do not downgrade to 3.4. See `context/ui-tokens.md` and `context/ui-rules.md`.
 
 <!-- INSFORGE:START -->
 ## InsForge backend

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, Flag } from "lucide-react";
 import { dayDiff, getInitials, parseDateOnly, toDateInputValue } from "@/lib/dates";
 import { insforge } from "@/lib/insforge-client";
+import { hasInAppHistory } from "@/components/layout/navigation-tracker";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { PageContainer } from "@/components/shared/page-container";
 import { Toast } from "@/components/shared/toast";
@@ -540,7 +541,7 @@ export function TaskDetailView({
     <PageContainer>
       <button
         type="button"
-        onClick={() => router.back()}
+        onClick={() => (hasInAppHistory() ? router.back() : router.push("/tasks"))}
         className="mb-3.5 inline-flex items-center gap-1.75 rounded-sm py-1.5 pr-2 text-[13.5px] font-semi text-accent"
       >
         <ArrowLeft size={17} />

@@ -140,6 +140,7 @@ UX events:
 | `user_logged_out` | "Log out" clicked in the avatar menu | Yes |
 | `role_view_switched` | "View as" toggled in the avatar menu | Yes |
 | `activity_filter_selected` | A filter chip is clicked on My Activities | Yes |
+| `task_filter_selected` | A Tasks page filter is changed, or Clear filters is clicked (`{ filter: "initiative" \| "projects" \| "owners" \| "status" \| "clear", count }`; never on restore from the URL or saved state) | Yes (Feature 34) |
 | `task_clicked` | A task row is clicked to navigate to Task Detail | Yes |
 | `new_task_modal_opened` | The "New task" button is clicked to open the modal | Yes (Feature 25) — re-added alongside the real `createTask` Server Action |
 

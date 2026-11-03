@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Navbar } from "@/components/layout/navbar";
+import { NavigationTracker } from "@/components/layout/navigation-tracker";
 import { ViewAsProvider } from "@/components/layout/view-as-context";
 import { getServerClient } from "@/lib/insforge-server";
 import type { AuthUser } from "@/types";
@@ -34,6 +35,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className="h-full font-sans antialiased">
       <body className="flex min-h-full flex-col bg-surface-subtle text-text-primary">
+        <NavigationTracker />
         <ViewAsProvider key={user?.role ?? "user"} realRole={user?.role ?? "user"}>
           <Navbar user={user} />
           {children}

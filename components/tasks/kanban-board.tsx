@@ -8,16 +8,18 @@ import type { BoardTask } from "./types";
 
 interface KanbanBoardProps {
   tasks: BoardTask[];
+  // Status filter: only these columns render; empty shows all five.
+  statuses?: TaskStatus[];
   today: Date;
   onDropTask: (taskId: string, status: TaskStatus) => void;
 }
 
-export function KanbanBoard({ tasks, today, onDropTask }: KanbanBoardProps) {
+export function KanbanBoard({ tasks, statuses = [], today, onDropTask }: KanbanBoardProps) {
   const [draggingId, setDraggingId] = useState<string | null>(null);
 
   return (
     <div className="flex items-start gap-3.5 overflow-x-auto pb-2">
-      {STATUS_COLUMNS.map((col) => {
+      {STATUS_COLUMNS.filter((col) => statuses.length === 0 || statuses.includes(col.status)).map((col) => {
         const items = tasks
           .filter((t) => t.status === col.status)
           .sort((a, b) => a.endDate.getTime() - b.endDate.getTime());
@@ -32,7 +34,7 @@ export function KanbanBoard({ tasks, today, onDropTask }: KanbanBoardProps) {
               if (draggingId) onDropTask(draggingId, col.status);
               setDraggingId(null);
             }}
-            className="flex min-h-30 min-w-65 flex-1 flex-col gap-2.5 rounded-md border border-border bg-surface-subtle p-2.75"
+            className="flex min-h-30 min-w-65 max-w-85 flex-1 flex-col gap-2.5 rounded-md border border-border bg-surface-subtle p-2.75"
           >
             <div className="flex items-center gap-2 px-1 py-0.5">
               <span className={`h-2 w-2 rounded-full ${accent.dot}`} />

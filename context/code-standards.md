@@ -119,7 +119,7 @@ The full, locked list (see `project-overview.md` for the complete table with shi
 | `task_follow_up_toggled` | The follow-up flag is toggled on a task row |
 | `note_added` | A note is added to a Task's activity timeline |
 
-UX events (`user_logged_in`, `user_login_server`, `user_login_failed`, `user_logged_out`, `role_view_switched`, `activity_filter_selected`, `task_clicked`, `new_task_modal_opened`) aren't gated by this rule — see `project-overview.md`.
+UX events (`user_logged_in`, `user_login_server`, `user_login_failed`, `user_logged_out`, `role_view_switched`, `activity_filter_selected`, `task_filter_selected`, `task_clicked`, `new_task_modal_opened`) aren't gated by this rule — see `project-overview.md`.
 
 ## Environment Variables
 
