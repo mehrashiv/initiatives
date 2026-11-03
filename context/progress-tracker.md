@@ -4,9 +4,9 @@ This file is updated as the build proceeds — it is the running record of what'
 
 ## Current Status
 
-- **Phase:** Phase 10 — Tasks Filters (in progress)
-- **Last completed feature:** 33. Tasks filter bar UI (verified live 2026-11-03). Code in `components/tasks/filter-pickers.tsx`, `components/tasks/tasks-view.tsx`, `components/tasks/kanban-board.tsx`, `app/tasks/page.tsx`.
-- **In progress:** 34. Tasks filter logic. Built 2026-11-03 from `docs/specs/0001-tasks-filter-saved-state/index.md` (all 9 build plan steps); awaiting `/check verify`. Code in `components/tasks/filter-state.ts`, `components/tasks/tasks-view.tsx`, `app/tasks/page.tsx`, `components/layout/navigation-tracker.tsx`, `components/task-detail/task-detail-view.tsx`, `components/shared/toast.tsx`.
+- **Phase:** Phase 10 — Tasks Filters (complete — all 2 features shipped)
+- **Last completed feature:** 34. Tasks filter logic (2026-11-03). Built from `docs/specs/0001-tasks-filter-saved-state/index.md`; `/check review` approved with nits (`docs/reviews/2026-11-03-main.md`), `/check verify` passed all 15 acceptance criteria live, and `npm test` covers AC-1 to AC-15. Code in `components/tasks/filter-state.ts`, `components/tasks/tasks-view.tsx`, `app/tasks/page.tsx`, `components/layout/navigation-tracker.tsx`, `components/task-detail/task-detail-view.tsx`, `components/shared/toast.tsx`.
+- **Next up:** None — build plan complete.
 
 ## Progress Checklist
 
@@ -62,7 +62,7 @@ This file is updated as the build proceeds — it is the running record of what'
 
 ### Phase 10 — Tasks Filters
 - [x] 33. Tasks filter bar UI
-- [ ] 34. Tasks filter logic
+- [x] 34. Tasks filter logic
 
 ## Decisions Made During Build
 

@@ -135,6 +135,7 @@ Payments currently has TypeScript SDK docs only. Use the Payments API reference 
 - Storage: Upload files to buckets, store URLs in database
 - AI integrations should call OpenRouter directly with `baseURL: "https://openrouter.ai/api/v1"` and a server-side `OPENROUTER_API_KEY`
 - **EXTRA IMPORTANT**: This project uses Tailwind CSS v4 (`tailwindcss ^4` with `@tailwindcss/postcss`). Tokens live in `@theme` in `app/globals.css`; there is no `tailwind.config.ts`. Do not downgrade to 3.4. See `context/ui-tokens.md` and `context/ui-rules.md`.
+- Tests: `npm test` runs Vitest (jsdom, Testing Library; config in `vitest.config.mts`, setup in `vitest.setup.ts`). Test files sit beside their source as `*.test.ts(x)`; mock only system boundaries (`@/lib/insforge-client`, server actions, `posthog-js`, `next/navigation`). Preferences live in `test-preferences.json`.
 
 <!-- INSFORGE:START -->
 ## InsForge backend
@@ -156,3 +157,7 @@ Key patterns:
 - Reference users with `auth.users(id)`; use `auth.uid()` in RLS policies.
 - For storage uploads, persist both the returned `url` and `key`.
 <!-- INSFORGE:END -->
+
+## Agent skills
+
+- Declined: Vitest, Testing Library, jsdom (skill discovery offered 2026-11-03)
