@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, Flag } from "lucide-react";
-import { dayDiff, getInitials, toDateInputValue } from "@/lib/dates";
+import { dayDiff, getInitials, parseDateOnly, toDateInputValue } from "@/lib/dates";
 import { insforge } from "@/lib/insforge-client";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { PageContainer } from "@/components/shared/page-container";
@@ -40,9 +40,11 @@ interface TaskDetailViewProps {
   initialName: string;
   initialDescription: string;
   initialStatus: TaskStatus;
-  initialStartDate: Date | null;
-  initialEndDate: Date | null;
-  initialDeliveryDate: Date | null;
+  // Raw "YYYY-MM-DD" strings — parsed here, in the browser, so local midnight is
+  // the viewer's midnight rather than the server's (UTC) one.
+  initialStartDate: string | null;
+  initialEndDate: string | null;
+  initialDeliveryDate: string | null;
   initialProgress: number;
   initialBlockerOwner: string;
   initialFlagged: boolean;
@@ -61,7 +63,15 @@ function statusLabel(status: TaskStatus) {
   return STATUS_COLUMNS.find((c) => c.status === status)?.title ?? status;
 }
 
-function dueChipFor(endDate: Date | null, today: Date) {
+// A delivered or done task is no longer "due", so it reports how it finished
+// against the end date instead of counting up overdue days (matches the Gantt buckets).
+function dueChipFor(endDate: Date | null, deliveryDate: Date | null, status: TaskStatus, today: Date) {
+  if (deliveryDate && endDate) {
+    const late = dayDiff(deliveryDate, endDate);
+    if (late > 0) return { text: `Delivered ${late} ${late === 1 ? "day" : "days"} late`, className: "bg-warning-light text-warning" };
+    return { text: "Delivered on time", className: "bg-success-light text-success-dark" };
+  }
+  if (deliveryDate || status === "done") return { text: "Completed", className: "bg-success-light text-success-dark" };
   if (!endDate) return { text: "No due date", className: "bg-surface-inset text-text-secondary" };
   const diff = dayDiff(endDate, today);
   if (diff < 0) return { text: `${-diff} ${-diff === 1 ? "day" : "days"} overdue`, className: "bg-danger-light text-danger-cta" };
@@ -97,9 +107,9 @@ export function TaskDetailView({
   const [name, setName] = useState(initialName);
   const [description, setDescription] = useState(initialDescription);
   const [status, setStatus] = useState<TaskStatus>(initialStatus);
-  const [startDate, setStartDate] = useState(initialStartDate);
-  const [endDate, setEndDate] = useState(initialEndDate);
-  const [deliveryDate, setDeliveryDate] = useState(initialDeliveryDate);
+  const [startDate, setStartDate] = useState(() => (initialStartDate ? parseDateOnly(initialStartDate) : null));
+  const [endDate, setEndDate] = useState(() => (initialEndDate ? parseDateOnly(initialEndDate) : null));
+  const [deliveryDate, setDeliveryDate] = useState(() => (initialDeliveryDate ? parseDateOnly(initialDeliveryDate) : null));
   const [progress, setProgress] = useState(initialProgress);
   const [blockerOwner, setBlockerOwner] = useState(initialBlockerOwner);
   const [ownerId, setOwnerId] = useState(initialOwnerId);
@@ -120,7 +130,7 @@ export function TaskDetailView({
   const selectedProject = projectOptions.find((p) => p.id === projectId);
   const projectName = selectedProject?.name ?? "Unassigned";
   const initiativeName = selectedProject?.initiativeName ?? "Unassigned";
-  const dueChip = dueChipFor(endDate, today);
+  const dueChip = dueChipFor(endDate, deliveryDate, status, today);
   const profileNameById = useMemo(() => new Map(ownerOptions.map((o) => [o.id, o.name])), [ownerOptions]);
 
   const showToast = (message: string, tone: "success" | "error" = "success") => {

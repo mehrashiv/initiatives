@@ -1,13 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerClient } from "@/lib/insforge-server";
 import { TaskDetailView } from "@/components/task-detail/task-detail-view";
-import { parseDateOnly } from "@/lib/dates";
 import type { TimelineEntry } from "@/components/task-detail/types";
 import type { ProjectOption } from "@/components/shared/new-task-modal";
-
-function toDate(value: string | null): Date | null {
-  return value ? parseDateOnly(value) : null;
-}
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -64,9 +59,9 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
       initialName={task.name}
       initialDescription={task.description ?? ""}
       initialStatus={task.status}
-      initialStartDate={toDate(task.start_date)}
-      initialEndDate={toDate(task.end_date)}
-      initialDeliveryDate={toDate(task.delivery_date)}
+      initialStartDate={task.start_date}
+      initialEndDate={task.end_date}
+      initialDeliveryDate={task.delivery_date}
       initialProgress={task.progress}
       initialBlockerOwner={task.blocker_owner ?? ""}
       initialFlagged={task.flagged}

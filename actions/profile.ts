@@ -14,7 +14,10 @@ export async function login(input: z.infer<typeof loginSchema>): Promise<{ error
   const { email, password } = loginSchema.parse(input);
   const auth = createAuthActions({ cookies: await cookies() });
   const { error } = await auth.signInWithPassword({ email, password });
-  if (error) return { error: "Invalid email or password" };
+  if (error) {
+    console.error("[login] signInWithPassword failed", { email, statusCode: error.statusCode, error: error.error, message: error.message });
+    return { error: error.statusCode === 401 ? "Invalid email or password" : error.message || "Sign in failed" };
+  }
   const posthog = getPostHogClient();
   posthog.capture({ distinctId: email, event: "user_login_server", properties: { email } });
 }
